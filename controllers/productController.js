@@ -57,7 +57,7 @@ export async function getProductById(req, res) {
     }
 }
 
-export function saveProduct(req, res) {
+export async function saveProduct(req, res) {
 
     if(!isAdmin(req))
     {
@@ -67,7 +67,34 @@ export function saveProduct(req, res) {
         return
     } 
 
-    const product = new Product
+    const { categoryId, brandId } = req.body;
+    const key = `${categoryId}-${brandId}`;
+    let productId = "";
+
+    try {
+        const lastProduct = await Product.find({ categoryId, brandId })
+            .sort({ productId: -1 })
+            .limit(1);
+
+        if (lastProduct.length > 0) {
+            const lastId = parseInt(
+                lastProduct[0].productId.replace(`${key}-`, "")
+            );
+            productId = `${key}-${String(lastId + 1).padStart(3, "0")}`;
+        } else {
+            // First product for this category + brand
+            productId = `${key}-001`;
+        }
+    } catch (err) {
+        return res.status(500).json({ 
+            message: "Failed to fetch last Product ID", 
+            error: err.message 
+        });
+    }
+
+    req.body.productId = productId; 
+    const product = new Product(req.body);
+
     (
         req.body
     );
@@ -118,10 +145,8 @@ export async function updateProduct(req, res) {
         })
         return
     }
-
     const productId = req.params.productId
     const updatingData = req.body
-
     try{
         await Product.updateOne({productId : productId}, updatingData)
 
