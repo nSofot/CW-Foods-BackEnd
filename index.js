@@ -2,6 +2,9 @@ import express from "express";
 import bodyParser from "body-parser";
 import mongoose, { mongo } from "mongoose";
 import productRouter from "./Routes/productRouter.js";
+import categoryRouter from "./Routes/categoryRouter.js";
+import brandRouter from "./Routes/brandRouter.js";
+import uomRouter from "./Routes/uomRouter.js";
 import userRouter from "./Routes/userRouter.js";
 import orderRouter from "./Routes/orderRouter.js";
 import reviewRouter from "./Routes/reviewRouter.js";
@@ -51,6 +54,9 @@ mongoose.connect(process.env.MONGODB_URL)
 
 
 app.use("/api/products", productRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/brand", brandRouter);
+app.use("/api/uom", uomRouter);
 app.use("/api/user", userRouter);
 app.use("/api/user/login", userRouter);
 app.use("/api/order", orderRouter);
