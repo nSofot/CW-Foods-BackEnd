@@ -6,6 +6,14 @@ const productSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    categoryId: {
+        type: String,
+        required: true
+    },
+    brandId: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true
@@ -27,13 +35,28 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    wholesalePrice: {
+    retailPrice: {
         type: Number,
         required: true
     },
+    distributorPrice: {
+        type: Number,
+        required: true
+    },
+    discountRate: {
+        type: Number,
+        default: 0
+    },
+    averageCost: {
+        type: Number,
+        default: 0
+    },
+    uomId: {
+        type: String,
+        required: true  
+    },
     stock: {
         type: Number,
-        required: true,
         default: 0
     },
     isAvailable: {
