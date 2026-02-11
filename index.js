@@ -1,10 +1,14 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose, { mongo } from "mongoose";
+import supplierRouter from "./Routes/supplierRouter.js";
 import productRouter from "./Routes/productRouter.js";
 import categoryRouter from "./Routes/categoryRouter.js";
 import brandRouter from "./Routes/brandRouter.js";
 import uomRouter from "./Routes/uomRouter.js";
+import locationsRouter from "./Routes/locationsRouter.js";
+import stockTransactionRouter from "./Routes/stockTransactionRouter.js";
+import stockRouter from "./Routes/stockRouter.js";
 import userRouter from "./Routes/userRouter.js";
 import orderRouter from "./Routes/orderRouter.js";
 import reviewRouter from "./Routes/reviewRouter.js";
@@ -52,11 +56,14 @@ mongoose.connect(process.env.MONGODB_URL)
 })
 
 
-
+app.use("/api/supplier", supplierRouter);
 app.use("/api/products", productRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/brand", brandRouter);
 app.use("/api/uom", uomRouter);
+app.use("/api/locations", locationsRouter);
+// app.use("/api/stock", stockRouter);
+app.use("/api/stockTransaction", stockTransactionRouter);
 app.use("/api/user", userRouter);
 app.use("/api/user/login", userRouter);
 app.use("/api/order", orderRouter);
