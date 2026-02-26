@@ -8,7 +8,7 @@ const stockTransactionSchema = new mongoose.Schema({
     transactionType: {
         type: String,
         required: true,
-        enum: ['grn', 'invoice', 'transfer-in', 'transfer-out', 'adjustment-in', 'adjustment-out', 'returns'],
+        enum: ['grn', 'invoice', 'transfer', 'adjustment-in', 'adjustment-out', 'returns'],
     },
     transactionDate: {
         type: Date,

@@ -225,24 +225,45 @@ export async function addStock(req, res) {
 
 
 export async function reduceStock(req, res) {
-    if(!isAdmin(req))
-    {
-        res.status(403).json({
-            message : "You are not authorized to update stock"
-        })
-        return
+  if (!isAdmin(req)) {
+    return res.status(403).json({
+      message: "You are not authorized to update stock",
+    });
+  }
+
+  const { productId } = req.params;
+  const { locationId, quantity } = req.body;
+
+  try {
+    // 1️⃣ Find the product by productId
+    const product = await Product.findOne({ productId });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
-    const { productId, locationId, quantity } = req.body;
-    try {
-        const existingStock = await Stock.findOne({ productId, locationId });
-        if (existingStock && existingStock.quantity >= quantity) {
-            existingStock.quantity -= quantity;
-            await existingStock.save();
-        } else {
-            return res.status(400).json({ message: "Insufficient stock" });
-        }
-        res.json({ message: "Stock subtracted successfully" });
-    } catch (err) {
-        res.status(500).json({ message: "Error subtracting stock", error: err.message });
+
+    // 2️⃣ Find the stock entry for the location
+    const stockItem = product.stock.find((s) => s.locationId === locationId);
+    if (!stockItem) {
+      return res.status(404).json({ message: "Stock record not found for this location" });
     }
+
+    // 3️⃣ Check if enough stock exists
+    if (stockItem.quantity < quantity) {
+      return res.status(400).json({ message: "Insufficient stock" });
+    }
+
+    // 4️⃣ Subtract stock
+    stockItem.quantity -= quantity;
+
+    // 5️⃣ Save the product
+    await product.save();
+
+    return res.json({ message: "Stock subtracted successfully", product });
+  } catch (err) {
+    console.error("REDUCE STOCK ERROR:", err);
+    return res.status(500).json({
+      message: "Error subtracting stock",
+      error: err.message,
+    });
+  }
 }

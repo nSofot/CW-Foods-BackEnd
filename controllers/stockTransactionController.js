@@ -4,13 +4,12 @@ import StockTransaction from "../models/stockTransaction.js";
 export async function saveStockTransaction(req, res) {
     const trxType = req.body.transactionType;
     const trxPrefixMap = {
-    grn: "GRN0",
-    invoice: "INVC",
-    "transfer-in": "TRIN",
-    "transfer-out": "TROT",
+    "grn": "GRN0",
+    "invoice": "INVC",
+    "transfer": "TRNF",
     "adjustment-in": "ADIN",
     "adjustment-out": "ADOT",
-    returns: "RETN",
+    "returns": "RETN",
     };
     const prefix = trxPrefixMap[trxType];
 
