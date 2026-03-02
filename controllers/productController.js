@@ -187,3 +187,83 @@ export async function searchProducts(req, res) {
 		});
 	}
 }
+
+export async function addStock(req, res) {
+    if (!isAdmin(req)) {
+        return res.status(403).json({ message: "You are not authorized to update stock" });
+    }
+
+    const { productId } = req.params;
+    const { locationId, quantity } = req.body;
+
+    try {
+        const product = await Product.findOne({ productId });
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        const qty = parseFloat(quantity);
+        if (isNaN(qty) || qty <= 0) {
+            return res.status(400).json({ message: "Invalid quantity" });
+        }
+
+        // Check if this location stock already exists
+        const stockItem = product.stock.find(s => s.locationId === locationId);
+        if (stockItem) {
+            stockItem.quantity += qty;  // update existing
+        } else {
+            product.stock.push({ locationId, quantity: qty }); // must push object, not number
+        }
+
+        await product.save();
+        res.json({ message: "Stock updated successfully", stock: product.stock });
+    } catch (err) {
+        console.error("Add stock error:", err);
+        res.status(500).json({ message: "Error updating stock", error: err.message });
+    }
+}
+
+
+export async function reduceStock(req, res) {
+  if (!isAdmin(req)) {
+    return res.status(403).json({
+      message: "You are not authorized to update stock",
+    });
+  }
+
+  const { productId } = req.params;
+  const { locationId, quantity } = req.body;
+
+  try {
+    // 1️⃣ Find the product by productId
+    const product = await Product.findOne({ productId });
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // 2️⃣ Find the stock entry for the location
+    const stockItem = product.stock.find((s) => s.locationId === locationId);
+    if (!stockItem) {
+      return res.status(404).json({ message: "Stock record not found for this location" });
+    }
+
+    // 3️⃣ Check if enough stock exists
+    if (stockItem.quantity < quantity) {
+      return res.status(400).json({ message: "Insufficient stock" });
+    }
+
+    // 4️⃣ Subtract stock
+    stockItem.quantity -= quantity;
+
+    // 5️⃣ Save the product
+    await product.save();
+
+    return res.json({ message: "Stock subtracted successfully", product });
+  } catch (err) {
+    console.error("REDUCE STOCK ERROR:", err);
+    return res.status(500).json({
+      message: "Error subtracting stock",
+      error: err.message,
+    });
+  }
+}

@@ -55,10 +55,11 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true  
     },
-    stock: {
-        type: Number,
-        default: 0
-    },
+    stock: [
+        {
+            locationId: { type: String, required: true },
+            quantity: { type: Number, required: true, default: 0 }
+    }],
     isAvailable: {
         type: Boolean,
         default: true 
