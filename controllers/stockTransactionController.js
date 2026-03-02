@@ -40,14 +40,18 @@ export async function saveStockTransaction(req, res) {
     req.body.referenceId = transactionNumber;
     const stockTransactionData = req.body;
     try {
-        const stockTransaction = new StockTransaction(stockTransactionData);
-        await stockTransaction.save();
-        res.json({ message: "Stock transaction saved successfully" });
+    const stockTransaction = new StockTransaction(stockTransactionData);
+    await stockTransaction.save();
+
+    res.json({
+        message: "Stock transaction saved successfully",
+        referenceId: stockTransaction.referenceId
+    });
     } catch (err) {
-        res.status(500).json({
+    res.status(500).json({
         message: "Error saving stock transaction",
         error: err.message
-        });
+    });
     }
 }
 
