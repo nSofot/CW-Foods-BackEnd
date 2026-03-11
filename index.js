@@ -11,6 +11,7 @@ import customerRouter from "./Routes/customerRouter.js";
 import customerTransactionRouter from "./Routes/customerTransactionRouter.js";
 import stockTransactionRouter from "./Routes/stockTransactionRouter.js";
 import userRouter from "./Routes/userRouter.js";
+import ledgerAccountRouter from "./Routes/ledgerAccountRoutes.js";
 import orderRouter from "./Routes/orderRouter.js";
 import reviewRouter from "./Routes/reviewRouter.js";
 
@@ -68,6 +69,7 @@ app.use("/api/customerTransaction", customerTransactionRouter);
 app.use("/api/stockTransaction", stockTransactionRouter);
 app.use("/api/user", userRouter);
 app.use("/api/user/login", userRouter);
+app.use("/api/accounts", ledgerAccountRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/reviews", reviewRouter);
 
