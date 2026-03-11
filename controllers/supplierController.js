@@ -77,3 +77,30 @@ export async function updateSupplier(req, res) {
         res.status(500).json({ message: "Failed to update supplier" });
     }
 }
+
+export async function searchSuppliers(req, res) {
+    const searchQuery = req.query.query || "";
+
+    try {
+        const regex = { $regex: searchQuery, $options: "i" };
+
+        const filter = {
+            ...(searchQuery.trim() !== "" && {
+                $or: [
+                    { name: regex },
+                    { address: regex },
+                    { mobile: regex },
+                    { phone: regex }
+                ]
+            })
+        };
+
+        const suppliers = await Supplier.find(filter);
+        res.json(suppliers);
+    } catch (err) {
+        res.status(500).json({
+            message: "Error searching suppliers",
+            error: err
+        });
+    }
+}
